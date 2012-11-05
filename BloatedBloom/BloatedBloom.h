@@ -5,30 +5,22 @@
 #ifndef BLOATED_BLOOM_H
 #define BLOATED_BLOOM_H
 
-extern _byte VectorBloatedBloom[Index_BB/2+Index_BB%2];
+	_int queryBloatedBloomFilter_sorted(_long firstHash, _long secondHash);
+
+	_int queryBloatedBloomFilter(_long firstHash, _long secondHash);
+
+	_bool BloatedBloomAddToFilter_sorted(_long firstHash, _long secondHash);
 
 
-
-_int queryBloatedBloomFilter_sorted(_long firstHash, _long secondHash);
-_int queryBloatedBloomFilter(_long firstHash, _long secondHash);
-
-_bool BloatedBloomAddToFilter_sorted(_long firstHash, _long secondHash);
+	_bool BloatedBloomAddToFilter(_long firstHash, _long secondHash);
 
 
-_bool BloatedBloomAddToFilter(_long firstHash, _long secondHash);
+	_bool BloatedBloom_Init(_ulong);
 
-void printBloated(void);
+	_bool BloatedBloom_Close(void);
 
-void printBloatedStat(void);
+	void printBloated(void);
 
-
-		
-//
-//  these function counts the number of collioson 
-//  in the hash values
-//  
-		int AddList(_ulong hashValue, node** headnode);
-		void PrintList(node* headnode);
-		void DeleteList(node* headnode);
+	void printBloatedStat(void);
 
 #endif

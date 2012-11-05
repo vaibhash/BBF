@@ -7,16 +7,55 @@
 
 #include "../Include/Types.h"
 #include "BloatedBloom.h"
-typedef struct{
-	_ulong min;
-	_ulong max;
-}minmax;
 
-_byte VectorBloatedBloom[Index_BB/2+Index_BB%2] = {0,};
-_ulong hashValues[4] = {0,};
-_ulong size_bb = Index_BB;	
+static _byte *BloatedBloom_Vector = NULL;
+
+static _ulong size_bb = 0;	
+
+
 node* hash[4] = {NULL,NULL,NULL,NULL};
-minmax layer[4] = {{0,0},};    
+
+_ulong hashValues[4] = {0,};
+
+_bool BloatedBloom_Init(_ulong vector_size)
+{
+	BloatedBloom_Vector =  new _byte[vector_size/2+vector_size%2]();
+	size_bb = vector_size;
+	return true;
+}
+
+_bool BloatedBloom_Close()
+{
+	delete [] BloatedBloom_Vector;
+	size_bb = 0;
+	return true;
+}
+
+
+
+void swap_values(_ulong *A, _ulong *B) { _ulong temp = *A; *A = *B; *B = temp; }
+
+
+//Takes numbers {a,b,c,d}, split into 2 sets {a,b} {c,d}. Order each of those 2 set. That's one comparison per set.
+
+//Now pick lowest from the front (compare a,c). That's now three comparisons. 
+//Pick next lowest from either (b, d).That's four. 
+//and finallly compare the (b,c)
+
+
+void sort_four_numbers(_ulong a[])
+{
+	if(a[0]>a[1]) swap_values(a+0,a+1);
+	if(a[2]>a[3]) swap_values(a+2,a+3);
+	if(a[0]>a[2]) swap_values(a+0,a+2);
+	if(a[1]>a[3]) swap_values(a+1,a+3);
+	if(a[1]>a[2]) swap_values(a+1,a+2);
+	return;
+
+}
+
+
+    
 // function to keep track of collison 
 //   from same hash function
 //    
@@ -98,26 +137,6 @@ void PrintList(node* headnode)
 
 
 
-void swapp(_ulong *A, _ulong *B) { _ulong temp = *A; *A = *B; *B = temp; }
-
-
-//Takes numbers {a,b,c,d}, split into 2 sets {a,b} {c,d}. Order each of those 2 set. That's one comparison per set.
-
-//Now pick lowest from the front (compare a,c). That's now three comparisons. 
-//Pick next lowest from either (b, d).That's four. 
-//and finallly compare the (b,c)
-
-
-void sort_four_numbers(_ulong a[])
-{
-	if(a[0]>a[1]) swapp(a+0,a+1);
-	if(a[2]>a[3]) swapp(a+2,a+3);
-	if(a[0]>a[2]) swapp(a+0,a+2);
-	if(a[1]>a[3]) swapp(a+1,a+3);
-	if(a[1]>a[2]) swapp(a+1,a+2);
-	return;
-
-}
 
 
 
@@ -146,15 +165,13 @@ void setbit(int index)
 
 
 	_ulong nibble_index = hashValues[index]%size_bb;
-	if(layer[index].min==0||layer[index].min>nibble_index)layer[index].min = nibble_index;
-	if(layer[index].max<nibble_index)layer[index].max = nibble_index;
 	if(nibble_index%2)
 	{
-		VectorBloatedBloom[nibble_index/2]|=(or_value<<4);
+		BloatedBloom_Vector[nibble_index/2]|=(or_value<<4);
 	}
 	else
 	{
-		VectorBloatedBloom[nibble_index/2 + 1]|=(or_value);
+		BloatedBloom_Vector[nibble_index/2 + 1]|=(or_value);
 	}
 
 	//AddList(hashValues[index],&hash[index]);
@@ -191,11 +208,11 @@ _bool getbit(int index)
 	_ulong nibble_index = hashValues[index]%size_bb;
 	if(nibble_index%2)
 	{
-		return VectorBloatedBloom[nibble_index/2]&(or_value<<4);
+		return BloatedBloom_Vector[nibble_index/2]&(or_value<<4);
 	}
 	else
 	{
-		return VectorBloatedBloom[nibble_index/2 + 1]&(or_value);
+		return BloatedBloom_Vector[nibble_index/2 + 1]&(or_value);
 	}
 	return false;
 
@@ -238,9 +255,9 @@ void printBloated()
 	printf("Start printing vectors\n");
 	for(j=0;j<counter;j++)
 	{
-		if(VectorBloatedBloom[j]!=0)
+		if(BloatedBloom_Vector[j]!=0)
 		{
-				printf("index %ld value %d\n",j,VectorBloatedBloom[j]);
+				printf("index %ld value %d\n",j,BloatedBloom_Vector[j]);
 		}
 	}
 	
@@ -255,12 +272,7 @@ void printBloatedStat()
 	printf("\nBLOATED MEM INFO\n");
 	printf("Total memory used %ld\n",sizeof(_byte)*(size_bb/2+size_bb%2));
 	printf("Number of index provided %ld\n\n",size_bb);
-	/*
-	int i;
-	for(i=0;i<4;i++)
-	{
-		printf("%d : min : %ld , max : %ld\n",(i+1),layer[i].min,layer[i].max);
-	}	
+	/*	
 	PrintList(hash[0]);
 	PrintList(hash[1]);
 	PrintList(hash[2]);

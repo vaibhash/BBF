@@ -7,18 +7,35 @@
 #include "../Include/Types.h"
 #include "Bloom.h"
 
-_bool VectorBloom[Index_B] = {0,};
- 
-_ulong size_b =  Index_B;
+ static _bool *Bloom_Vector = NULL;
+ static _ulong size_b = 0;
+
+
+
+
+_bool Bloom_Init(_ulong vector_size)
+{
+	Bloom_Vector = new _bool[vector_size]();
+	size_b = vector_size;
+	return true;	
+	
+}
+
+_bool  Bloom_Close(void)
+{
+	delete [] Bloom_Vector;
+	size_b = 0;
+	return true;
+}
 
 _bool BloomAddToFilter(_ulong firstHash, _ulong secondHash, _int numberHash)
 {
 	_int i;
-	VectorBloom[firstHash%size_b] = 1 ;
-	VectorBloom[secondHash%size_b] = 1 ;
+	Bloom_Vector[firstHash%size_b] = 1 ;
+	Bloom_Vector[secondHash%size_b] = 1 ;
 	for(i=1;i<numberHash-1;i++)
 	{
-		VectorBloom[(firstHash+i*secondHash)%size_b] = 1 ;
+		Bloom_Vector[(firstHash+i*secondHash)%size_b] = 1 ;
 
 	}
 
@@ -31,7 +48,7 @@ _bool printBloom()
 	printf("start of vector\n{\t");
 	for(i=0;i<size_b;i++)
 	{
-		printf("Array[%ld] :: 0x%x,\n",i,VectorBloom[i]);
+		printf("Array[%ld] :: 0x%x,\n",i,Bloom_Vector[i]);
 	}
 	printf("\n}\n");
 	return true;
@@ -49,11 +66,11 @@ _int queryBloomFilter(_ulong firstHash, _ulong secondHash, _int numberHash)
 {
 
 	_int i;
-	if( (VectorBloom[firstHash%size_b] == 1) && ( VectorBloom[secondHash%size_b] == 1  )) 
+	if( (Bloom_Vector[firstHash%size_b] == 1) && ( Bloom_Vector[secondHash%size_b] == 1  )) 
 	{
 		for(i=1;i<numberHash-1;i++)
 		{
-			if(VectorBloom[(firstHash+i*secondHash)%size_b] != 1)
+			if(Bloom_Vector[(firstHash+i*secondHash)%size_b] != 1)
 			       return 0	;
 
 		}

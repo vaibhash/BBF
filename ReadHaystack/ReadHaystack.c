@@ -3,10 +3,11 @@
 //	Description: Definitions for ReadHaystack
 //
 
-#include "ReadHaystack.h"
+#include "../Include/Types.h"
 #include "../RollOverHash/RollOverHash.h"
 #include "../BloatedBloom/BloatedBloom.h"
 #include "../Bloom/Bloom.h"
+#include "ReadHaystack.h"
 
 _uint ReadHayStack(_string fileHayStack, _int windowSize)
 {
@@ -77,6 +78,7 @@ _uint ReadHayStack(_string fileHayStack, _int windowSize)
      }
       	
     fclose ( file );
+	BloatedBloom_Close();
 
    	printf("\nNumber of Needles found in haystack %d\n", count);
    	printf("\nTotal strings matched %ld\n",position);
@@ -93,8 +95,8 @@ _uint ReadHaystackInit(_string buffer, _int windowSize)
 	
 	if(strlen(buffer)==(unsigned)windowSize)
 	{
-		firstHashValue = first_firstRound(buffer);
-		secondHashValue = second_firstRound(buffer);
+		firstHashValue = firstHash_initialRound(buffer);
+		secondHashValue = secondHash_initialRound(buffer);
 #ifdef SORTED
 		printf("using sorted version\n");
 		
@@ -122,10 +124,10 @@ _uint ReadHaystackInit(_string buffer, _int windowSize)
 _uint ReadHaystackUpdate(_byte inChar, _byte outChar)
 {
 	_int result = 0;
-    _long firstHashValue = 0, secondHashValue = 0;
+    	_long firstHashValue = 0, secondHashValue = 0;
     
-    firstHashValue = first_updateRound((_byte)outChar , (_byte)inChar);
-   	secondHashValue = second_updateRound((_byte)outChar , (_byte)inChar);
+    	firstHashValue = firstHash_updateRound((_byte)outChar , (_byte)inChar);
+    	secondHashValue = secondHash_updateRound((_byte)outChar , (_byte)inChar);
    	
    	//printf("%ld %ld\n",firstHashValue,secondHashValue);
 #ifdef SORTED
@@ -229,6 +231,7 @@ _uint ReadHayStackBloom(_string fileHayStack, _int windowSize, _int numberHash)
     }
       	
   	fclose ( file );
+	Bloom_Close();
 
    	printf("\nNumber of Needles found in haystack %d\n", count);
    	printf("\nTotal strings matched %ld\n",position);
@@ -245,8 +248,8 @@ _uint ReadHaystackInitBloom(_string buffer, _int windowSize, _int numberHash)
 	
    	if(strlen(buffer)==(unsigned)windowSize)
 	{
-		firstHashValue = first_firstRound(buffer);
-		secondHashValue = second_firstRound(buffer);
+		firstHashValue = firstHash_initialRound(buffer);
+		secondHashValue = secondHash_initialRound(buffer);
 		result = queryBloomFilter((_ulong)firstHashValue,(_ulong) secondHashValue,numberHash);
 		return result;
 	}
@@ -264,10 +267,10 @@ _uint ReadHaystackInitBloom(_string buffer, _int windowSize, _int numberHash)
 _uint ReadHaystackUpdateBloom(_byte inChar, _byte outChar,_int numberHash)
 {
 	_int result = 0;
-    _ulong firstHashValue = 0, secondHashValue = 0;
+    	_ulong firstHashValue = 0, secondHashValue = 0;
     
-    firstHashValue = first_updateRound((_byte)outChar,(_byte)inChar);
-   	secondHashValue = second_updateRound( (_byte)outChar ,(_byte)inChar);
+    	firstHashValue = firstHash_updateRound((_byte)outChar,(_byte)inChar);
+   	secondHashValue = secondHash_updateRound( (_byte)outChar ,(_byte)inChar);
    		
    	result = queryBloomFilter((_ulong)firstHashValue, (_ulong)secondHashValue,numberHash);
    	

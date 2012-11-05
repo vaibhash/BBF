@@ -3,13 +3,14 @@
 //	Description: Definitions for ReadNeedleToBloom
 //
 
+#include "../Include/Types.h"
 #include "ReadNeedleToBloom.h"
 #include "../RollOverHash/RollOverHash.h"
 #include "../BloatedBloom/BloatedBloom.h"
 #include "../Bloom/Bloom.h"
 
 
-_uint count;
+_uint static count;
 
 _uint ReadNeedleFileToBloatedBloom(_string needle_file, _int windowSize)
 {
@@ -34,6 +35,7 @@ _uint ReadNeedleFileToBloatedBloom(_string needle_file, _int windowSize)
 	}
 	
 	RollOverHash_Init(windowSize);
+	BloatedBloom_Init(Index_BB);
    	FILE *file = fopen ( needle_file, "r" );
    	if ( file != NULL )
    	{
@@ -61,7 +63,7 @@ _bool ReadNeedleToBloatedBloom(_byte *needle, _int windowSize)
 {
 	if(strlen(needle)==(unsigned)windowSize)
 	{
-	   BloatedBloomAddToFilter((_ulong)first_firstRound(needle), (_ulong)second_firstRound(needle));
+	   BloatedBloomAddToFilter((_ulong)firstHash_initialRound(needle), (_ulong)secondHash_initialRound(needle));
 	   count++;
     	}
     return true;
@@ -91,6 +93,7 @@ _uint ReadNeedleFileToBloom(_string needle_file, _int windowSize, _int numberHas
 		return -1;
 	}
 	RollOverHash_Init(windowSize);
+	Bloom_Init(Index_B);
    	FILE *file = fopen ( needle_file, "r" );
    	if ( file != NULL )
    	{
@@ -118,7 +121,7 @@ _bool ReadNeedleToBloom(_byte *needle, _int windowSize, _int numberHash)
 {
 	if(strlen(needle)==(unsigned)windowSize)
 	{
-	   BloomAddToFilter(first_firstRound(needle), second_firstRound(needle), numberHash);
+	   BloomAddToFilter(firstHash_initialRound(needle), secondHash_initialRound(needle), numberHash);
 	   count++;
 	}
     return true;

@@ -3,26 +3,60 @@
 //	Description: Implementation of Roll over hash 
 //	class specification
 //
-
+#include "../Include/Types.h"
+#include "../Include/MersenneTwister.h"
 #include "RollOverHash.h"
+
+//
+//	BIT-wise operation used 
+// 
+#define AND( A , B )	((A)&(B))
+#define XOR( A , B )	((A)^(B))
+#define ROTL( A, B )	((A)<<(B))
+
+//
+//	Few constant for the RolloverHash 
+//
+	const _int 	delta = 1;
+	const _int 	sizeTable = 256; 
+	const _ulong 	AddressMask = LONG_MAX; 
 
  
 //
-//	definitions of the data
+//	two table of size "sizeTable" which will almost always be 256 
+//	which is ascii char set size
+//	One table is for adding the new charaters and other one to remove the 
+//	old characters from the table
+//	Two seperate tables for first and second hash function
 //
+	_ulong static First_TransformationT[sizeTable] = {0,};
+	_ulong static First_TransformationTPrime[sizeTable]= {0,};
+	_ulong static Second_TransformationT[sizeTable]= {0,};
+	_ulong static Second_TransformationTPrime[sizeTable]= {0,};
+	
+
 //
-	_ulong First_TransformationT[sizeTable] = {0,};
-	_ulong First_TransformationTPrime[sizeTable]= {0,};
-	_ulong Second_TransformationT[sizeTable]= {0,};
-	_ulong Second_TransformationTPrime[sizeTable]= {0,};
-	
-	_int windowSize;
-	
-	_ulong first_hashWord;
-	_ulong second_hashWord;
+//	windowSize is the size of the data read 
+//	and hashWord is the value of the hash for the last string read
+//	two seperate long values to store ouput of two rolloverhash values
+//
+	_int static windowSize;	
+	_ulong static first_hashWord;
+	_ulong static second_hashWord;
 
 
-_ulong first_firstRound(_string buffer)
+
+//
+//	these function generates the random number which are filled in the first_TransformationT
+//	and Second_TransformationT 
+//	
+	_bool firstHash_ranGenSet();
+	_bool firstHash_setTprime();
+	_bool secondHash_ranGenSet();
+	_bool secondHash_setTprime();
+		
+
+_ulong firstHash_initialRound(_string buffer)
 {
 	
 	first_hashWord = 0;
@@ -39,7 +73,7 @@ _ulong first_firstRound(_string buffer)
 
 }
 
-_ulong second_firstRound(_string buffer)
+_ulong secondHash_initialRound(_string buffer)
 {
 
 	second_hashWord = 0;
@@ -54,7 +88,7 @@ _ulong second_firstRound(_string buffer)
 
 }
 
-_bool first_setTprime()
+_bool firstHash_setTprime()
 {
 	for(_int i = 0 ; i < sizeTable ; i++ )
 	{
@@ -64,7 +98,7 @@ _bool first_setTprime()
 
 }
 
-_bool second_setTprime()
+_bool secondHash_setTprime()
 {
 	for(_int i = 0 ; i < sizeTable ; i++ )
 	{
@@ -74,7 +108,7 @@ _bool second_setTprime()
 
 }
 
-_ulong first_updateRound(_byte removeChar, _byte addChar)
+_ulong firstHash_updateRound(_byte removeChar, _byte addChar)
 {
 
 	if(first_hashWord)
@@ -97,7 +131,7 @@ _ulong first_updateRound(_byte removeChar, _byte addChar)
 
 }
 
-_ulong second_updateRound(_byte removeChar, _byte addChar)
+_ulong secondHash_updateRound(_byte removeChar, _byte addChar)
 {
 
 	if(second_hashWord)
@@ -122,7 +156,7 @@ _ulong second_updateRound(_byte removeChar, _byte addChar)
 
 
 
-_bool first_ranGenSet()
+_bool firstHash_ranGenSet()
 {
 	MTRand mtrand;
 	for( _int i = 0 ; i < sizeTable ; i++ )
@@ -132,7 +166,7 @@ _bool first_ranGenSet()
 	return true;
 }
 
-_bool second_ranGenSet()
+_bool secondHash_ranGenSet()
 {
 	MTRand mtrand;
 	for( _int i = 0 ; i < sizeTable ; i++ )
@@ -171,13 +205,17 @@ _bool printArray()
 
 _bool RollOverHash_Init( _int window = 10 )
 {
-			windowSize = window;	
-			first_ranGenSet();
-			first_setTprime();
-			first_hashWord = 0;
-			second_ranGenSet();
-			second_setTprime();
-			second_hashWord = 0;
+			windowSize = window;
+			{	
+				firstHash_ranGenSet();
+				firstHash_setTprime();
+				first_hashWord = 0;
+			}
+			{
+				secondHash_ranGenSet();
+				secondHash_setTprime();
+				second_hashWord = 0;
+			}
 			return true;
 }
 
@@ -187,14 +225,15 @@ int main( int argc , char *argv[] )
 
 	RollOverHash_Init();
 	printArray();
-	printf("%ld\n",first_firstRound("vaibhavsha"));
-	printf("%ld\n",first_updateRound('v','r'));
-	printf("%ld\n",first_firstRound("vaibhavsha"));
-	printf("%ld\n",first_updateRound('v','r'));
-	printf("%ld\n",second_firstRound("vaibhavsharma"));
+	printf("%ld\n",firstHash_initialRound("vaibhavsha"));
+	printf("%ld\n",firstHash_updateRound('v','r'));
+	printf("%ld\n",firstHash_initialRound("vaibhavsha"));
+	printf("%ld\n",firstHash_updateRound('v','r'));
+	printf("%ld\n",secondHash_initialRound("vaibhavsharma"));
 	printf("%ld\n",second_updateRound('v','r'));
-	printf("%ld\n",second_firstRound("vaibhavsharma"));
+	printf("%ld\n",secondHash_initialRound("vaibhavsharma"));
 	printf("%ld\n",second_updateRound('v','r'));
 
 }
 */
+
