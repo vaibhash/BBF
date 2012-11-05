@@ -5,11 +5,7 @@
 #ifndef BLOATED_BLOOM_H
 #define BLOATED_BLOOM_H
 
-	_int queryBloatedBloomFilter_sorted(_long firstHash, _long secondHash);
-
 	_int queryBloatedBloomFilter(_long firstHash, _long secondHash);
-
-	_bool BloatedBloomAddToFilter_sorted(_long firstHash, _long secondHash);
 
 
 	_bool BloatedBloomAddToFilter(_long firstHash, _long secondHash);
