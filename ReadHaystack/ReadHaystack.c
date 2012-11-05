@@ -6,6 +6,7 @@
 #include "../Include/Types.h"
 #include "../RollOverHash/RollOverHash.h"
 #include "../BloatedBloom/BloatedBloom.h"
+#include "../BloatedBloomSorted/BloatedBloomSorted.h"
 #include "../Bloom/Bloom.h"
 #include "ReadHaystack.h"
 
@@ -100,7 +101,7 @@ _uint ReadHaystackInit(_string buffer, _int windowSize)
 #ifdef SORTED
 		printf("using sorted version\n");
 		
-		result = queryBloatedBloomFilter_sorted(firstHashValue, secondHashValue);
+		result = queryBloatedBloomSortedFilter(firstHashValue, secondHashValue);
 #else
 
 		result = queryBloatedBloomFilter(firstHashValue, secondHashValue);
@@ -132,7 +133,7 @@ _uint ReadHaystackUpdate(_byte inChar, _byte outChar)
    	//printf("%ld %ld\n",firstHashValue,secondHashValue);
 #ifdef SORTED
 
-   	result = queryBloatedBloomFilter_sorted(firstHashValue, secondHashValue);
+   	result = queryBloatedBloomSortedFilter(firstHashValue, secondHashValue);
 #else
 
    	result = queryBloatedBloomFilter(firstHashValue, secondHashValue);
