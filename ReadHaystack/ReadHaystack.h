@@ -8,8 +8,28 @@
 
 #include "../Include/Types.h"
 
+
 //
-//	Read haystack file and check for match in bloom filter
+//	Read haystack file and check for match in sorted bloated bloom filter
+//
+		_uint ReadHayStackSorted(_string haystack_file, _int windowSize);
+		
+
+//
+//	calculate the first hashvalue
+//
+		_uint ReadHaystackInitSorted(_string query, _int windowSize);
+		
+//
+//	update the hashvalue through update hash functionality 
+//
+		_uint ReadHaystackUpdateSorted(_byte addChar, _byte removeChar);
+
+
+
+
+//
+//	Read haystack file and check for match in bloated bloom filter
 //
 		_uint ReadHayStack(_string haystack_file, _int windowSize);
 		
@@ -23,6 +43,8 @@
 //	update the hashvalue through update hash functionality 
 //
 		_uint ReadHaystackUpdate(_byte addChar, _byte removeChar);
+
+
 
 
 //

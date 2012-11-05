@@ -18,8 +18,17 @@
 //	Read needle and update the bloated bloom filter
 //
 		_bool ReadNeedleToBloatedBloom(_byte *needle, _int windowSize);
+
+//
+//	Read needle file and fill the bloated bloom filters
+//
+		_uint ReadNeedleFileToBloatedBloomSorted(_string needle_file, _int windowSize);
 		
-		//
+//
+//	Read needle and update the bloated bloom filter
+//
+		_bool ReadNeedleToBloatedBloomSorted(_byte *needle, _int windowSize);		
+//
 //	Read needle file and fill the bloom filters
 //
 		_uint ReadNeedleFileToBloom(_string needle_file, _int windowSize, _int numberHash);
