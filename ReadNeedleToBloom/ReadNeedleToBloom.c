@@ -36,7 +36,6 @@ _uint ReadNeedleFileToBloatedBloom(_string needle_file, _int windowSize)
 	}
 	
 	RollOverHash_Init(windowSize);
-	BloatedBloom_Init(Index_BB);
    	FILE *file = fopen ( needle_file, "r" );
    	if ( file != NULL )
    	{
@@ -94,7 +93,6 @@ _uint ReadNeedleFileToBloatedBloomSorted(_string needle_file, _int windowSize)
 	}
 	
 	RollOverHash_Init(windowSize);
-	BloatedBloomSorted_Init(Index_BB);
    	FILE *file = fopen ( needle_file, "r" );
    	if ( file != NULL )
    	{
@@ -153,7 +151,6 @@ _uint ReadNeedleFileToBloom(_string needle_file, _int windowSize, _int numberHas
 		return -1;
 	}
 	RollOverHash_Init(windowSize);
-	Bloom_Init(Index_B);
    	FILE *file = fopen ( needle_file, "r" );
    	if ( file != NULL )
    	{

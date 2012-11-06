@@ -13,6 +13,7 @@ g++ Interface.c ../RollOverHash/RollOverHash.o ../ReadHaystack/ReadHaystack.o ..
 #include "../ReadHaystack/ReadHaystack.h"
 #include "../Bloom/Bloom.h"
 #include "../BloatedBloom/BloatedBloom.h"
+#include "../BloatedBloomSorted/BloatedBloomSorted.h"
 #include "../Input/Input.h"
 
 
@@ -34,4 +35,10 @@ _int main()
 	//printBloated();
 	//printArray();
 	ReadHayStack("./Input/haystack",windowSize);
+
+	ReadNeedleFileToBloatedBloomSorted("./Input/needle_8000",windowSize);
+
+	printBloatedSortedStat();
+
+	ReadHayStackSorted("./Input/haystack",windowSize);
 }

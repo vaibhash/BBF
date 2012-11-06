@@ -124,7 +124,6 @@ _uint ReadHayStack(_string fileHayStack, _int windowSize)
     	}
       	
     	fclose ( file );
-	BloatedBloom_Close();
 
    	printf("\nNumber of Needles found in haystack %d\n", count);
    	printf("\nTotal strings matched %ld\n",position);
@@ -248,7 +247,6 @@ _uint ReadHayStackSorted(_string fileHayStack, _int windowSize)
     	}
       	
     	fclose ( file );
-	BloatedBloomSorted_Close();
 
    	printf("\nNumber of Needles found in haystack %d\n", count);
    	printf("\nTotal strings matched %ld\n",position);
@@ -369,7 +367,6 @@ _uint ReadHayStackBloom(_string fileHayStack, _int windowSize, _int numberHash)
     }
       	
   	fclose ( file );
-	Bloom_Close();
 
    	printf("\nNumber of Needles found in haystack %d\n", count);
    	printf("\nTotal strings matched %ld\n",position);
